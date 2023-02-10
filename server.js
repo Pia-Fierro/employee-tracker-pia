@@ -4,6 +4,8 @@ const inquirer = require ('inquirer');
 const table = require ('console.table');
 
 
+
+
 //conection to database
 const db = mysql.createConnection(
     {
@@ -21,10 +23,10 @@ db.connect ((err) => {
     promptUser();
 })
 
-const promptUser = () => {
-    inquirer.prompt ([
+ function promptUser() {
+    inquirer.prompt (
         {
-            name:'option',
+            name:'options',
             type: 'list',
             message: 'Please select an option',
             choices: [
@@ -37,13 +39,13 @@ const promptUser = () => {
                 'Update the role of an existing employee',
                 // 'Update employee manager', 'View employee by manager', 'view employees by department',
                 // 'Delete demartments', 'Delete roles', 'Delete employees', 'View the total utilized budget of a department'
-                'Exit',
+                'Exit'
             ]
         }
-    ])
+    )
 
     .then((answer) => {
-        switch (answer.action) {
+        switch (answer.options) {
             case "View all the departments":
                 viewallDep();
                 break;
@@ -51,7 +53,7 @@ const promptUser = () => {
                 vieallRols();
                 break;  
             case "view all the employees":
-                vieallEmpl();
+                viewallEmpl();
                 break;  
             case "Add a new department":
                 addNewDep();
@@ -64,9 +66,26 @@ const promptUser = () => {
                 break;  
             case "Update the role of an existing employee":
                 updateEmpRol();
-                break;  
+                break; 
+            case "Exit":
+                // Finish the connection and exit the app.
+                db.end();
+                break;     
         }
     });
 }
 
 // view all department
+
+function viewallDep () {
+    db.connect (function(err) {
+        if (err) throw err;
+        db.query("SELECT * FROM department", function (err, result){
+            if(err) throw err;
+            console.log("\n");
+            console.table(result);
+            promptUser();
+        });
+    })
+}
+
