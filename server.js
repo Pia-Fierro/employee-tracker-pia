@@ -50,7 +50,7 @@ db.connect ((err) => {
                 viewallDep();
                 break;
             case "View all the roles":
-                vieallRols();
+                viewAllRoles();
                 break;  
             case "view all the employees":
                 viewallEmpl();
@@ -81,6 +81,17 @@ function viewallDep () {
     db.connect (function(err) {
         if (err) throw err;
         db.query("SELECT * FROM department", function (err, result){
+            if(err) throw err;
+            console.log("\n");
+            console.table(result);
+            promptUser();
+        });
+    })
+}
+function viewAllRoles () {
+    db.connect (function(err) {
+        if (err) throw err;
+        db.query("SELECT * FROM role JOIN department ON role.id = department.id", function (err, result){
             if(err) throw err;
             console.log("\n");
             console.table(result);
