@@ -91,7 +91,7 @@ function viewallDep () {
 function viewAllRoles () {
     db.connect (function(err) {
         if (err) throw err;
-        db.query("SELECT * FROM role JOIN department ON role.id = department.id", function (err, result){
+        db.query("SELECT role.id, role.role_title, role.salary, department.department_name FROM role JOIN department ON role.id = department.id", function (err, result){
             if(err) throw err;
             console.log("\n");
             console.table(result);
@@ -99,4 +99,16 @@ function viewAllRoles () {
         });
     })
 }
+
+// function viewallEmpl () {
+//     db.connect (function(err) {
+//         if (err) throw err;
+//         db.query("SELECT * FROM employee", function (err, result){
+//             if(err) throw err;
+//             console.log("\n");
+//             console.table(result);
+//             promptUser();
+//         });
+//     })
+// }
 
