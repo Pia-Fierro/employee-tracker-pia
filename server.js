@@ -99,7 +99,7 @@ function viewAllRoles () {
         });
     })
 }
-
+// missing manager name instead of manager id.
 function viewallEmpl () {
     db.connect (function(err) {
         if (err) throw err;
@@ -111,3 +111,35 @@ function viewallEmpl () {
         });
     })
 }
+
+function addNewDep () {
+    inquirer.prompt (
+        {
+            type: 'input',
+            message: 'Please type the department name you want to add',
+            name: 'new_department'
+        }
+    )
+    .then((answer) => {
+        let newDepartment = answer.new_department;
+        db.connect(function(err){
+            if (err) throw err;
+            db.query("INSERT INTO department(department_name) VALUES (?)", newDepartment ,function (err, result){
+                if(err) throw err;
+                console.log("\n");
+                console.log(newDepartment + "" + "department created")
+                console.table(result)
+                viewallDep();
+            })
+        })
+    });
+}
+
+// function addNewRol () {
+//     inquirer.prompt (
+//         {
+//             type: 'input',
+//             message: 'Please type the role name you want to add',
+//             name: 'new_role'
+//         })
+// }
