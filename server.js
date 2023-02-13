@@ -91,7 +91,7 @@ function viewallDep () {
 function viewAllRoles () {
     db.connect (function(err) {
         if (err) throw err;
-        db.query("SELECT  role.role_title AS 'Job title', role.id AS 'Role ID', role.salary, department.department_name AS 'Department' FROM role JOIN department ON role.id = department.id", function (err, result){
+        db.query("SELECT  role.id AS 'Role ID', role.role_title AS 'Job title', role.salary, department.department_name AS 'Department' FROM role JOIN department ON role.id = department.id", function (err, result){
             if(err) throw err;
             console.log("\n");
             console.table(result);
@@ -127,19 +127,40 @@ function addNewDep () {
             db.query("INSERT INTO department(department_name) VALUES (?)", newDepartment ,function (err, result){
                 if(err) throw err;
                 console.log("\n");
-                console.log(newDepartment + "" + "department created")
-                console.table(result)
+                console.log(newDepartment + " " + "department created")
+                console.log(result);
                 viewallDep();
             })
         })
     });
 }
 
-// function addNewRol () {
-//     inquirer.prompt (
-//         {
-//             type: 'input',
-//             message: 'Please type the role name you want to add',
-//             name: 'new_role'
-//         })
-// }
+function addNewRol () {
+    
+    inquirer.prompt ([
+        {
+            type: 'input',
+            message: 'Please type the role title you want to add',
+            name: 'new_role'
+        },
+        {
+            type: 'input',
+            message: 'What is the salary of the new role',
+            name: 'new_role_salary'
+        }
+
+    ])
+    .then((answer) => { 
+        let newRole = answer.new_role;
+        let newRoleSalary = answer.new_role_salary;
+        db.connect(function(err){
+            if(err) throw err;
+            db.query("INSERT INTO role (role_title, salary) VALUES (2,3)", (newRole , newRoleSalary), function (err,result){
+                if(err) throw err;
+                console.log("\n");
+                console.log("New" + " " + newRole + " " + "role had been created")
+                viewAllRoles();
+            });
+        });
+    });
+}
