@@ -57,7 +57,7 @@ function promptUser() {
           addNewDep();
           break;
         case "Add a new role":
-          addNewRol();
+          addNewRole();
           break;
         case "Add a new employee":
           addNewEmpl();
@@ -125,19 +125,6 @@ function viewallEmpl() {
 
 // creating a department array
 
-let departmentChoices = [];
-function selectDepartment() {
-     db.query("SELECT * FROM department", function (err, result) {
-      if (err) throw err;
-      // console.log(result);
-      for (var i = 0; i < result.length; i++) {
-        departmentChoices.push(result[i].department_name);
-      }
-    });
-  // console.log(departmentChoices);
-  return departmentChoices;
-}
-
 function addNewDep() {
   inquirer
     .prompt({
@@ -158,7 +145,20 @@ function addNewDep() {
       });
 }
 
-function addNewRol() {
+let departmentChoices = [];
+function selectDepartment() {
+     db.query("SELECT * FROM department", function (err, result) {
+      if (err) throw err;
+      // console.log(result);
+      for (var i = 0; i < result.length; i++) {
+        departmentChoices.push(result[i].department_name);
+      }
+    });
+  // console.log(departmentChoices);
+  return departmentChoices;
+}
+
+function addNewRole() {
   inquirer
     .prompt([
       {
@@ -178,13 +178,27 @@ function addNewRol() {
         choices: selectDepartment()
       },
     ])
-// departmentChoices.filter((dept) => answer.departmentChoices === dept.name)
     .then((answer) => {
       // let allDepartments = selectDepartment();
       let newRole = answer.title;
       let newRoleSalary = answer.salary;
-      let departmentId = answer.department;
-      db.connect(function (err) {
+      console.log(answer);
+
+      //Find the matching id that matches the chosen department
+      new Promise ((resolve) => {
+        db.query("SELECT * FROM department", function (err, result) {
+          resolve(result);
+        });
+      }).then((allDepartments) => {
+
+        var chosenDepartment = allDepartments.find((department) => {
+          return answer.department == department.department_name;
+        })
+
+        var departmentId = chosenDepartment.id;
+        console.log(departmentId, 'departmentId');
+
+        db.connect(function (err) {
         if (err) throw err;
         db.query(
           "INSERT INTO role SET ?",
@@ -203,5 +217,32 @@ function addNewRol() {
           }
         );
       });
+
+      });
     });
-}
+  }
+//     .then((answer) => {
+//       let newRole = answer.title;
+//       let newRoleSalary = answer.salary;
+//       let departmentId = answer.department;
+//       db.connect(function (err) {
+//         if (err) throw err;
+//         db.query(
+//           "INSERT INTO role SET ?",
+//           {
+//             role_title: newRole,
+//             salary: newRoleSalary,
+//             department_id: departmentId,
+//           },
+
+//           function (err, result) {
+//             if (err) throw err;
+//             console.log("\n");
+//             console.log("New" + " " + newRole + " " + "role had been created");
+//             console.table(result);
+//             viewAllRoles();
+//           }
+//         );
+//       });
+//     });
+// }
