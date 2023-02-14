@@ -45,7 +45,7 @@ function promptUser() {
     .then((answer) => {
       switch (answer.options) {
         case "View all the departments":
-          viewallDep();
+          viewallDept();
           break;
         case "View all the roles":
           viewAllRoles();
@@ -74,7 +74,7 @@ function promptUser() {
 }
 
 // view all department
-function viewallDep() {
+function viewallDept() {
     db.query(
       "SELECT department.department_name AS 'Department name', department.id AS 'Department ID' FROM department",
       function (err, result) {
@@ -88,7 +88,7 @@ function viewallDep() {
 
 function viewAllRoles() {
     db.query(
-      "SELECT  role.id AS 'Role ID', role.role_title AS 'Job title', role.salary, department.department_name AS 'Department' FROM role JOIN department ON role.id = department.id",
+      "SELECT  role.id, role.role_title, role.salary, department.department_name FROM role INNER JOIN department ON role.department_id = department.id",
       function (err, result) {
         if (err) throw err;
         console.log("\n");
@@ -139,7 +139,7 @@ function addNewDep() {
             console.log("\n");
             console.log(newDepartment + " " + "department created");
             console.log(result);
-            viewallDep();
+            viewallDept();
           }
         );
       });
