@@ -88,7 +88,7 @@ function viewallDept() {
 
 function viewAllRoles() {
     db.query(
-      "SELECT  role.id, role.role_title, role.salary, department.department_name FROM role INNER JOIN department ON role.department_id = department.id",
+      "SELECT  role.id, role.role_title, role.salary, department.department_name FROM role INNER JOIN department ON role.department_id = department.id ORDER BY role.id ASC",
       function (err, result) {
         if (err) throw err;
         console.log("\n");
@@ -179,10 +179,9 @@ function addNewRole() {
       },
     ])
     .then((answer) => {
-      // let allDepartments = selectDepartment();
       let newRole = answer.title;
       let newRoleSalary = answer.salary;
-      console.log(answer);
+      // console.log(answer);
 
       //Find the matching id that matches the chosen department
       new Promise ((resolve) => {
@@ -196,7 +195,7 @@ function addNewRole() {
         })
 
         var departmentId = chosenDepartment.id;
-        console.log(departmentId, 'departmentId');
+        // console.log(departmentId, 'departmentId');
 
         db.connect(function (err) {
         if (err) throw err;
@@ -221,28 +220,3 @@ function addNewRole() {
       });
     });
   }
-//     .then((answer) => {
-//       let newRole = answer.title;
-//       let newRoleSalary = answer.salary;
-//       let departmentId = answer.department;
-//       db.connect(function (err) {
-//         if (err) throw err;
-//         db.query(
-//           "INSERT INTO role SET ?",
-//           {
-//             role_title: newRole,
-//             salary: newRoleSalary,
-//             department_id: departmentId,
-//           },
-
-//           function (err, result) {
-//             if (err) throw err;
-//             console.log("\n");
-//             console.log("New" + " " + newRole + " " + "role had been created");
-//             console.table(result);
-//             viewAllRoles();
-//           }
-//         );
-//       });
-//     });
-// }
