@@ -104,7 +104,7 @@ function viewAllRoles() {
 // missing manager name instead of manager id.
 function viewallEmpl() {
     db.query(
-      "SELECT employee.id, employee.first_name, employee.last_name, role.role_title, role.salary, department.department_name ,employee.manager_id FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id",
+      "SELECT employee.id, employee.first_name, employee.last_name, role.role_title, role.salary, department.department_name ,employee.manager_id FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id ORDER BY employee.id ASC",
       function (err, result) {
         if (err) throw err;
         console.log("\n");
@@ -290,7 +290,7 @@ function addNewEmpl () {
         });
       }).then((allManagers) => {
         var chosenManager = allManagers.find ((employee) => {
-          return answer.manager == employee.id;
+          return answer.manager == employee.manager;
         }); 
 // chosen manager don't have an id.
         var managerId = chosenManager.id;
