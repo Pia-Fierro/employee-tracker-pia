@@ -139,12 +139,10 @@ let departmentChoices = [];
 function selectDepartment() {
      db.query("SELECT * FROM department", function (err, result) {
       if (err) throw err;
-      // console.log(result);
       for (var i = 0; i < result.length; i++) {
         departmentChoices.push(result[i].department_name);
       }
     });
-  // console.log(departmentChoices);
   return departmentChoices;
 }
 
@@ -171,7 +169,7 @@ function addNewRole() {
     .then((answer) => {
       let newRole = answer.title;
       let newRoleSalary = answer.salary;
-      // console.log(answer);
+ 
 
       //Find the matching id that matches the chosen department
       new Promise ((resolve) => {
@@ -185,7 +183,6 @@ function addNewRole() {
         });
 
         var departmentId = chosenDepartment.id;
-        // console.log(departmentId, 'departmentId');
 
         db.connect(function (err) {
         if (err) throw err;
@@ -230,7 +227,7 @@ var roleChoices = [];
 function selectRole () {
   db.query("SELECT * FROM role", function (err, result) {
     if (err) throw err;
-    // console.log(result);
+ 
     for (var i = 0; i < result.length; i++) {
       roleChoices.push(result[i].role_title);
     }
@@ -292,7 +289,7 @@ function addNewEmpl () {
         var chosenManager = allManagers.find ((employee) => {
           return answer.manager == employee.manager;
         }); 
-// chosen manager don't have an id.
+
         var managerId = chosenManager.id;
         console.log(managerId, 'managerId');
   
