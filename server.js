@@ -290,7 +290,7 @@ function addNewEmpl () {
         });
       }).then((allManagers) => {
         var chosenManager = allManagers.find ((employee) => {
-          return answer.manager == manager.id;
+          return answer.manager == employee.id;
         }); 
 // chosen manager don't have an id.
         var managerId = chosenManager.id;
