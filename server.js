@@ -215,7 +215,7 @@ function addNewRole() {
   // creating a manager array to allow user to pick a manager when adding new employee
 var managerChoices = [];
 function selectManager () {
-        db.query("SELECT employee.first_name + ' ' + employee.last_name AS name FROM employee where manager_id IS NULL", function (err, result){
+        db.query("SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS name FROM employee where manager_id IS NULL", function (err, result){
             if(err) throw err
             for (var i=0; i< result.length; i++){
                 managerChoices.push(result[i].name)
