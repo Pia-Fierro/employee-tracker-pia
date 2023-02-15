@@ -35,10 +35,13 @@ function promptUser() {
         "Add a new role",
         "Add a new employee",
         "Update the role of an existing employee",
-        // 'Update employee manager', 'View employee by manager',
+        // 'Update employee manager', 
+        // 'View employee by manager',
         // 'view employees by department',
-        // 'Delete demartments', 'Delete roles',
-        // 'Delete employees', 'View the total utilized budget of a department'
+        // 'Delete demartments', 
+        // 'Delete roles',
+        // 'Delete employees', 
+        // 'View the total utilized budget of a department'
         "Exit",
       ],
     })
@@ -97,33 +100,19 @@ function viewAllRoles() {
       }
     );
 }
+
 // missing manager name instead of manager id.
 function viewallEmpl() {
     db.query(
-      "SELECT employee.id AS 'Employee ID', employee.first_name AS 'Name', employee.last_name AS 'Last name', role.role_title AS 'Job title', role.salary, department.department_name AS 'Department',employee.manager_id FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id",
+      "SELECT employee.id, employee.first_name, employee.last_name, role.role_title, role.salary, department.department_name ,employee.manager_id FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id",
       function (err, result) {
         if (err) throw err;
         console.log("\n");
         console.table(result);
-        promptUser();
+        promptUser()
       }
     );
 }
-
-// // creating a manager array
-// var managers = [];
-// function viewManagers () {
-//         db.query("SELECT first_name + ' ' + last_name AS name FROM employee where manager_id IS NULL", function (err, result){
-//             if(err) throw err
-//             for (var i=0; i< result.length; i++){
-//                 managers.push(result[i].name)
-//             }
-//         });
-//     console.log(managers) 
-//     return managers;
-//     }
-
-// creating a department array
 
 function addNewDep() {
   inquirer
@@ -145,6 +134,7 @@ function addNewDep() {
       });
 }
 
+// creating a department array to allow user to pick department name when adding new role
 let departmentChoices = [];
 function selectDepartment() {
      db.query("SELECT * FROM department", function (err, result) {
@@ -192,7 +182,7 @@ function addNewRole() {
 
         var chosenDepartment = allDepartments.find((department) => {
           return answer.department == department.department_name;
-        })
+        });
 
         var departmentId = chosenDepartment.id;
         // console.log(departmentId, 'departmentId');
@@ -219,4 +209,61 @@ function addNewRole() {
 
       });
     });
+
   }
+
+  // creating a manager array to allow user to pick a manager when adding new employee
+var managerChoices = [];
+function selectManager () {
+        db.query("SELECT employee.first_name + ' ' + employee.last_name AS name FROM employee where manager_id IS NULL", function (err, result){
+            if(err) throw err
+            for (var i=0; i< result.length; i++){
+                managerChoices.push(result[i].name)
+            }
+        });
+    console.log(managerChoices) 
+    return managerChoices;
+    }
+
+// creating a  role array to allow user to pick a role when adding new employee
+var roleChoices = [];
+function selecRole () {
+  db.query("SELECT * FROM role", function (err, result) {
+    if (err) throw err;
+    // console.log(result);
+    for (var i = 0; i < result.length; i++) {
+      roleChoices.push(result[i].role_title);
+    }
+  });
+console.log(roleChoices);
+return roleChoices;
+}
+
+function addNewEmpl () {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        message: "Employee first name:",
+        name: "firstNAme",
+      },
+      {
+        type: "input",
+        message: "Employee last name:",
+        name: "lastName",
+      },
+      {
+        type: "list",
+        message: "What role does this employee has?",
+        name: "role",
+        choices: selecRole()
+      },
+      {
+        type: "list",
+        message: "Who is the manager of this employee?",
+        name: "manager",
+        choices: selectManager()
+      },
+    ])
+}
+
