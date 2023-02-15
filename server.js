@@ -215,10 +215,10 @@ function addNewRole() {
   // creating a manager array to allow user to pick a manager when adding new employee
 var managerChoices = [];
 function selectManager () {
-        db.query("SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS name FROM employee where manager_id IS NULL", function (err, result){
+        db.query("SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS manager FROM employee where manager_id IS NULL", function (err, result){
             if(err) throw err
             for (var i=0; i< result.length; i++){
-                managerChoices.push(result[i].name)
+                managerChoices.push(result[i].manager)
             }
         });
     console.log(managerChoices) 
@@ -227,7 +227,7 @@ function selectManager () {
 
 // creating a  role array to allow user to pick a role when adding new employee
 var roleChoices = [];
-function selecRole () {
+function selectRole () {
   db.query("SELECT * FROM role", function (err, result) {
     if (err) throw err;
     // console.log(result);
@@ -245,18 +245,18 @@ function addNewEmpl () {
       {
         type: "input",
         message: "Employee first name:",
-        name: "firstNAme",
+        name: "firstNAme"
       },
       {
         type: "input",
         message: "Employee last name:",
-        name: "lastName",
+        name: "lastName"
       },
       {
         type: "list",
         message: "What role does this employee has?",
         name: "role",
-        choices: selecRole()
+        choices: selectRole()
       },
       {
         type: "list",
@@ -265,5 +265,56 @@ function addNewEmpl () {
         choices: selectManager()
       },
     ])
-}
+    .then ((answer) => {
+      let newNAme = answer.firstNAme;
+      let newLastNAme = answer.lastName;
+      console.log(answer);
+    
+      // find the role_id that matches the chosen role
+      new Promise ((resolve) => {
+      db.query("SELECT * FROM role", function (err,result) {
+        resolve(result);
+      });
+      }).then((allRoles) => {
+      var chosenRol = allRoles.find((role) => {
+        return answer.role == role.role_title;
+      });
+      var roleId = chosenRol.id;
+      console.log(roleId, 'roleId');
 
+    //  employee id matching employee name (first name and last name) 
+     new Promise ((resolve) => {
+      db.query ("SELECT employee.id, CONCAT(employee.first_name, ' ', employee.last_name) AS manager FROM employee where manager_id IS NULL", function (err,result) {
+        resolve(result);  
+        console.log(result)
+        });
+      }).then((allManagers) => {
+        var chosenManager = allManagers.find ((employee) => {
+          return answer.manager == manager.id;
+        }); 
+// chosen manager don't have an id.
+        var managerId = chosenManager.id;
+        console.log(managerId, 'managerId');
+  
+        db.connect (function (err) {
+        if (err) throw err;
+        db.query("INSERT INTO employee SET ?",
+          {
+            first_name: newNAme,
+            last_name: newLastNAme,
+            role_id: roleId,
+            manager_id: managerId
+          },
+
+          function (err, result) {
+            if(err) throw err;
+            console.log("New employee created")
+            console.table(result);
+            viewallEmpl();
+          }
+        );
+      });
+    });
+  });
+}
+)}
