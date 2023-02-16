@@ -26,7 +26,7 @@ function promptUser() {
     .prompt({
       name: "options",
       type: "list",
-      message: "Please select an option",
+      message: "Main menu",
       choices: [
         "View all the departments",
         "View all the roles",
@@ -35,6 +35,7 @@ function promptUser() {
         "Add a new role",
         "Add a new employee",
         "Update the role of an existing employee",
+        // future features:
         // 'Update employee manager', 
         // 'View employee by manager',
         // 'view employees by department',
@@ -101,7 +102,7 @@ function viewAllRoles() {
     );
 }
 
-// missing manager name instead of manager id.
+
 function viewallEmpl() {
     db.query(
       "SELECT employee.id, employee.first_name, employee.last_name, role.role_title, role.salary, department.department_name ,employee.manager_id FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id ORDER BY employee.id ASC",
@@ -216,7 +217,6 @@ function selectManager () {
                 managerChoices.push(result[i].manager)
             }
         });
-    console.log(managerChoices) 
     return managerChoices;
     }
 
@@ -230,7 +230,6 @@ function selectRole () {
       roleChoices.push(result[i].role_title);
     }
   });
-console.log(roleChoices);
 return roleChoices;
 }
 
@@ -319,7 +318,7 @@ function updateEmpRol () {
     "SELECT employee.last_name, role.role_title FROM employee JOIN role ON employee.role_id = role.id", 
     function (err,result) {
       if(err) throw err;
-      console.log(result);
+
     inquirer
     .prompt ([
         {
@@ -327,6 +326,7 @@ function updateEmpRol () {
           message: 'last name of employee you want to update:',
           name: 'surname',
           choices: function () {
+            // last name array for user to chose employee last name to update the role
             var lastName = [];
             for (var i=0; i<result.length; i++) {
               lastName.push(result[i].last_name);
@@ -357,7 +357,6 @@ function updateEmpRol () {
         });
 
         var roleId = chosenRol.id;
-        console.log(roleId, 'roleId');
 
         db.connect(function(err) {
           if(err) throw err;
@@ -374,10 +373,10 @@ function updateEmpRol () {
               if (err) throw err;
               console.table(result);
               viewallEmpl()
-            }
+              }
           )
           })
+        });
       });
-    });
-  }
+    }
   )}
