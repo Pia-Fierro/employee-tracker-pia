@@ -170,7 +170,6 @@ function addNewRole() {
       let newRole = answer.title;
       let newRoleSalary = answer.salary;
  
-
       //Find the matching id that matches the chosen department
       new Promise ((resolve) => {
         db.query("SELECT * FROM department", function (err, result) {
@@ -204,9 +203,8 @@ function addNewRole() {
         );
       });
 
-      });
+        });
     });
-
   }
 
   // creating a manager array to allow user to pick a manager when adding new employee
@@ -313,5 +311,73 @@ function addNewEmpl () {
       });
     });
   });
-}
+   }
 )}
+
+function updateEmpRol () {
+  db.query(
+    "SELECT employee.last_name, role.role_title FROM employee JOIN role ON employee.role_id = role.id", 
+    function (err,result) {
+      if(err) throw err;
+      console.log(result);
+    inquirer
+    .prompt ([
+        {
+          type:'list',
+          message: 'last name of employee you want to update:',
+          name: 'surname',
+          choices: function () {
+            var lastName = [];
+            for (var i=0; i<result.length; i++) {
+              lastName.push(result[i].last_name);
+            }
+            return lastName;
+          }
+        },
+        {
+          type:'list',
+          message: 'what is the employee new role?',
+          name: 'role',
+          choices: selectRole ()
+        }
+        
+      ])
+      .then((answer) => {
+       var lastName = answer.surname
+
+       new Promise ((resolve) => {
+        db.query("SELECT * FROM role", function (err,result) {
+          resolve(result);
+          });
+        })
+
+        .then((allRoles) => {
+        var chosenRol = allRoles.find((role) => {
+          return answer.role == role.role_title;
+        });
+
+        var roleId = chosenRol.id;
+        console.log(roleId, 'roleId');
+
+        db.connect(function(err) {
+          if(err) throw err;
+          db.query(
+            "UPDATE employee SET ? WHERE ?",
+              [{
+                role_id: roleId,
+              },
+              {  
+                last_name: lastName
+              }],
+              
+            function(err,result) {
+              if (err) throw err;
+              console.table(result);
+              viewallEmpl()
+            }
+          )
+          })
+      });
+    });
+  }
+  )}
