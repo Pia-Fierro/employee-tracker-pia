@@ -22,5 +22,5 @@ The app it's built in node, using npm packages such as inquirer, console.table a
 
 ## Lynk to app demostration
 
-[Click here to be directed to video demostration app](https://watch.screencastify.com/v/pcuzkOcwWTWC8u3bu7mX)
+[Click here to be directed to video demostration app](https://watch.screencastify.com/v/OHngMxg1DiGcsdX4jMUI)
 

@@ -102,12 +102,21 @@ function viewAllRoles() {
     );
 }
 
-
 function viewallEmpl() {
     db.query(
-      "SELECT employee.id, employee.first_name, employee.last_name, role.role_title, role.salary, department.department_name ,employee.manager_id FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id ORDER BY employee.id ASC",
+      "SELECT employee.id, employee.first_name, employee.last_name, role.role_title, role.salary, department.department_name ,employee.manager_id AS manager FROM employee, role, department WHERE department.id = role.department_id AND role.id = employee.role_id ORDER BY employee.id ASC",
       function (err, result) {
         if (err) throw err;
+      // looking for employees with a manager_id and showin manager as name and last name of employee matching by the id
+        for (let i= 0;i<result.length; i++) {
+          if(result[i].manager) {
+            var found =result.find (function(employee) {
+              return result[i].manager === employee.id
+            })
+            result[i].manager = found.first_name + " " + found.last_name
+          }
+        }
+      
         console.log("\n");
         console.table(result);
         promptUser()
@@ -274,7 +283,6 @@ function addNewEmpl () {
         return answer.role == role.role_title;
       });
       var roleId = chosenRol.id;
-      console.log(roleId, 'roleId');
 
     //  employee id matching employee name (first name and last name) 
      new Promise ((resolve) => {
@@ -288,7 +296,6 @@ function addNewEmpl () {
         }); 
 
         var managerId = chosenManager.id;
-        console.log(managerId, 'managerId');
   
         db.connect (function (err) {
         if (err) throw err;
